@@ -25,6 +25,20 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - ./grafana:/etc/grafana/provisioning/datasources
+      - ./grafana/login:/var/lib/grafana
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    networks:
+      - proxy-net
+    command:
+      - --path.rootfs=/host
+    ports:
+      - 9100:9100
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /:/host:ro,rslave
 volumes:
   prom_data: null
 networks:
