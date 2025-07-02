@@ -26,6 +26,27 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning/datasources
       - ./grafana/login:/var/lib/grafana
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    networks:
+      - proxy-net
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    command: -config.file=./loki/local-config.yaml
+    volumes:
+      - ./loki:/etc/loki
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    networks:
+      - proxy-net
+    command: -config.file=./promtail/config.yml
+    volumes:
+      - /var/log:/var/log
+      - ./promtail:/etc/promtail
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
